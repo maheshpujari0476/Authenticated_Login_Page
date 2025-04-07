@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 const app = express();
 const port = 3000;
 import {router} from "./hello.js"
-
+import multer from 'multer'
 
 const logger =(req,res,next)=>{
 
@@ -21,7 +21,7 @@ const logger =(req,res,next)=>{
     console.log(`${req.method} ${req.protocol}://${req.get('host')} ${req.originalUrl}`[color]);
     next();
 }
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 app.use(logger)
 app.use(bodyParser.json())
