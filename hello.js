@@ -35,8 +35,9 @@ try{
 
 router.get('/allusers',async(req,res)=>{
     const user = await User.find({})
-    return res.json(user)
     console.log(user)
+    return res.json(user)
+    
 })
 
 

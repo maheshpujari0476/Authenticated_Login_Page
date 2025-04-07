@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         required:true,
         unique:true,
     }
-})
+},{timeseries:true})
 
 const User=new mongoose.model('User',userSchema)
 
