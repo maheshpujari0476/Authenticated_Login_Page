@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 const app = express();
 const port = 3000;
 import {router} from "./hello.js"
-import multer from 'multer'
+
 
 const logger =(req,res,next)=>{
 
