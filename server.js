@@ -4,10 +4,13 @@ import express from "express";
 import colors from "colors"
 import cors from "cors"
 import bodyParser from "body-parser";
+import session from "express-session"
 const app = express();
 const port = 3000;
 import {router} from "./hello.js"
-
+import { Session } from "inspector/promises";
+import MongoStore from "connect-mongo";
+import cookieParser  from "cookie-parser";
 
 const logger =(req,res,next)=>{
 
@@ -21,11 +24,49 @@ const logger =(req,res,next)=>{
     console.log(`${req.method} ${req.protocol}://${req.get('host')} ${req.originalUrl}`[color]);
     next();
 }
-app.use(express.urlencoded({extended:true}));
+// app.use(session({
+//   secret:'mysecret',
+//   resave:false,
+//   saveUninitialized:true,
+//   cookie:{magAge:70000}
+// }))
+// app.use(session({
+//    secret:'mysecret',
+//    resave:false,
+//    saveUninitialized:false,
+//    store:MongoStore.create({
+//    mongoUrl:'mongodb://127.0.0.1:27017/sessionmongo',
+//    collectionName:"sessions",
+//    ttl:60 * 60,
+//    }),
+//    cookie:{
+//     maxAge:6000 * 30,
+//     secure:false
+//    }
+
+// }))
+app.use(session({
+    secret:'mahesh',
+    resave:false,
+    saveUninitialized:false,
+    store:MongoStore.create({
+        mongoUrl:'mongodb://127.0.0.1:27017/newmongo',
+        collectionName:'sesion',
+        ttl:60 * 60,
+    }),
+    cookie:{
+        maxAge:6000 * 30,
+        secure:false,
+    }
+}))
+
+ app.use(cookieParser)
+app.use(express.urlencoded({extended:false}));
 app.use(express.json());
 app.use(logger)
 app.use(bodyParser.json())
 app.use(cors())
+
 app.use('/user',router);
 
 

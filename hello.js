@@ -4,13 +4,25 @@ import {User} from "./models/user.js"
 import {db} from "./models/mongo.js"
 import multer from "multer"
 import bcrypt from "bcrypt"
+import crypto from "crypto"
+import argon2 from "argon2"
 import fs from "fs"
 import cors from "cors"
 import path from "path"
+import cookieParser from  "cookie-parser"
+import { connect } from "http2"
 // router.get('/', (req, res) => {
 //     console.log('hello from home');
 //     res.send('hello from home page');
 // });
+
+// router.use(session({
+//     secret:'mysecret',
+//     resave:false,
+//     saveUninitialized:true,
+//     cookie:{magAge:20000}
+//   }))
+
 const storage = multer.diskStorage({
     destination:function(req,file,cb){
         cb(null,"./uploads")
@@ -22,6 +34,8 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage })
+
+
 router.post('/adduser',upload.any(),async(req,res)=>{
 
  
@@ -153,6 +167,98 @@ router.put('/addimage',upload.any(),(req,res)=>{
    return res.json(req.file)
 })
 
+router.post('/hash',upload.any(),async(req,res)=>{
+//   const {password,email,name} = req.body;
+//   req.session.name= name;
+//   req.session.email=email
+//   req.session.password=password
+// req.session.user=req.body
+//   const hash= await argon2.hash(password)
+//   console.log(hash)
+//   const compare= await argon2.verify(hash,password)
+//   if(compare){
+//     console.log('password match ')
+//     //return res.json('password match')
+//   }
+//   else{
+//     console.log('incorrect password')
+//     //return res.json('incorrect password')
+//   }
+//   return res.json(hash)
+
+// const users= await User.find({})
+// const user = await  users.map((user)=> user.email === email)
+
+if(req.session){
+    // console.log(`${req.session.name}`);
+    // console.log(`${req.session.password}`);
+    // console.log(`${req.session.email}`);
+    // console.log(req.session)
+console.log(req.session)
+console.log(req.cookies)
+
+return res.json({
+    message:'Session got successfully',
+    sessionData:req.session,
+    data:req.cookies,
+})
+}else{
+    console.log('no session id present');
+}
+// if(user){
+//     // const email = req.session.email
+//     const name1= req.session.name
+//     const email= req.session.email
+//     if(user){
+//     req.session.user=user;
+//     console.log('login successfull')
+//     }else{
+//       console.log('access denied login again');
+//     }
+//     console.log(name1,email)
+//     // console.log(req.session.user.password)
+//     // console.log(req.session.user.email)
+//     return res.json('user login succesfull')
+// }else{
+//     return res.json('invalid credentials');
+// }
+})
+
+
+
+router.post('/setsession',upload.any(),async(req,res)=>{
+    // const {name,password,email} = req.body;
+    // console.log(name,email,password)
+    // req.session.name=name;
+    // req.session.password=password;
+    // req.session.email=email
+//  req.session.setsession=req.body
+//     console.log(req.session)
+//     // res.cookie('username','maheshpujari',{maxAge:60 * 30})
+//     return res.send({
+//         message:'session set successfully',
+//         sessionData:req.session
+//     });
+const user=req.body
+req.session.sessionset=user;
+res.cookie('username',user,{maxAge:60000})
+console.log(req.session)
+return res.json({
+    message:"session set successfully",
+    sessionData:req.session
+})
+})
+
+router.post('/token',upload.any(),(req,res)=>{
+
+})
+router.delete('/logout',(req,res)=>{
+    req.session.destroy(err =>{
+   if(err) return res.json('error occures');
+   res.clearCookie('connect.sid')
+  res.json('session destroyed successfully');
+    })
+})
 export {
     router,
 }

@@ -1,4 +1,6 @@
 import mongoose from "mongoose"
+import express from "express"
+import MongoStore from "connect-mongo"
 mongoose.connect("mongodb://127.0.0.1:27017/newmongo")
 .then(()=> console.log('mongodb connected successfully'))
 .catch(()=> console.log('error occured'))
