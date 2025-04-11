@@ -13,18 +13,7 @@ import path from "path"
 import cookieParser from  "cookie-parser"
 import { connect } from "http2"
 import { arch } from "os"
-// router.use("view engine", "ejs");
-// router.get('/', (req, res) => {
-//     console.log('hello from home');
-//     res.send('hello from home page');
-// });
 
-// router.use(session({
-//     secret:'mysecret',
-//     resave:false,
-//     saveUninitialized:true,
-//     cookie:{magAge:20000}
-//   }))
 
 const storage = multer.diskStorage({
     destination:function(req,file,cb){
@@ -60,92 +49,31 @@ router.post('/adduser',upload.any(),async(req,res)=>{
     //     }
 
   
-// try{
-//     const {name,email,password} = req.body;
-//     // const file = req.file;
-//     // console.log("File:", file);
-//     const pastuser=await User.find({});
-//     // console.log(pastuser)
-//     const present = await pastuser.some((user)=> user.email === email && user.password===password);
-//     // console.log(present)
-//     if(present){
-//         console.log('user already exist try another email or password')
-//         return res.json('user already exist try anothe email or password');
-//     }else{
-//     const user = new User({name,email,password})
-//     const response = await user.save()
-//     const filepath = req.files.map((file)=> file.path);
-//     // console.log('data saved successfully',response)
-//     return res.json({
-//         message:'data uploaded succefully',
-//         data:{name,email,password},
-//         file:filepath,
-//     });
-// }
-// }catch(error){
-//  console.log('Error',error.message)
-//  return res.status(404).json({error:error.message})
-// }
-
-
-
-
-
-
-
-
-
-
-
-//  await user.save()
-//  .then(()=> {
-//     console.log('data saved successfully')
-//     res.status(201).json(user)
-//  }).catch((error)=>{
-//     console.log('error while saving user')
-//     return res.status(500).json('internal server error',error)
-//  })
-
-
-
-
 try{
-  
-const {name,email,password} = req.body;
-if(!email && !password){
-    return res.json('enter email and password in correct form')
+    const {name,email,password} = req.body;
+    // const file = req.file;
+    // console.log("File:", file);
+    const pastuser=await User.find({});
+    // console.log(pastuser)
+    const present = await pastuser.some((user)=> user.email === email && user.password===password);
+    // console.log(present)
+    if(present){
+        console.log('user already exist try another email or password')
+        return res.json('user already exist try anothe email or password');
+    }else{
+    const user = new User({name,email,password})
+    const response = await user.save()
+    const filepath = req.files.map((file)=> file.path);
+    // console.log('data saved successfully',response)
+    return res.json({
+        message:'data uploaded succefully',
+        data:{name,email,password},
+        file:filepath,
+    });
 }
-// const user = await User.find({})
-// const pastuser= await user.some((user)=> user.email === email );
-const pastuser = await User.findOne({ email })
-if(pastuser){
-    const compare = await bcrypt.compare(password,pastuser.password)
-
-if(compare){
-     console.log(' email already exist try another email');
-     return res.json('email already exist');
-}else{
-    console.log('password already exist')
-    return res.json('password already exist')
-}
-};
-// console.log(typeof req.body.password); // should be string
- 
-// const pass = req.body.password
-const hashpass= await bcrypt.hash(password,10)
-const user1 = new User({name,email,password:hashpass})
-const response = await user1.save()
-console.log(response)
-return res.json(response)
-// console.log(typeof hashpass)
-// const dbpass= await user.map((user)=> user.password);
-// console.log(dbpass)
-// console.log(typeof dbpass); 
-// console.log(pastuser.password)
-
 }catch(error){
-    console.log(error.message)
-    return res.json({error:error.message})
+ console.log('Error',error.message)
+ return res.status(404).json({error:error.message})
 }
  
 })
