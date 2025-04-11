@@ -332,11 +332,12 @@ const user = await User.findOne({ email })
     console.log('error occured',{message:error.message})
     return res.json({message:error.message})
 }
-    
-
-
-
 })
+
+
+
+
+
 const authenticate=(req,res,next)=>{
     // console.log(req.session.user,req.cookie.token)
    try{
@@ -345,11 +346,6 @@ const authenticate=(req,res,next)=>{
     }else{
         return res.render('login.ejs')
     }
-    //  return   res.render('secrect.ejs');
-    //  res.json({
-    //     message:"session set successfully",
-    //     sessionData:req.session
-    // })
   }catch(error){
     console.log('error occured')
 
@@ -359,14 +355,10 @@ const authenticate=(req,res,next)=>{
 
 
   router.get('/mainpage',authenticate,(req,res)=>{
-//   if(req.session.user && req.cookies.token);
-//     console.log('user authenticated successfully')
-//     res.json({
-//         message:"session set successfully",
-//         sessionData:req.session.user
-//     })
-console.log(req.session.user,req.cookies.token)
-    return res.render('secrect.ejs');
+
+      console.log(req.session.user,req.cookies.token)
+
+      return res.render('secrect.ejs');
 // console.log('helo')
   })
 
