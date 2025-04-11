@@ -2,6 +2,7 @@ import express from "express"
 const router = express.Router()
 import {User} from "./models/user.js"
 import {db} from "./models/mongo.js"
+import jwt from "jsonwebtoken"
 import multer from "multer"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
@@ -11,6 +12,8 @@ import cors from "cors"
 import path from "path"
 import cookieParser from  "cookie-parser"
 import { connect } from "http2"
+import { arch } from "os"
+// router.use("view engine", "ejs");
 // router.get('/', (req, res) => {
 //     console.log('hello from home');
 //     res.send('hello from home page');
@@ -250,8 +253,16 @@ return res.json({
 })
 
 router.post('/token',upload.any(),(req,res)=>{
-
+    const data = req.body;
+    const secretKey = 'firsttoken';
+     const token = jwt.sign(data,secretKey,{expiresIn:'3h'});
+     console.log(token)
+     return res.json({
+        message:'token created successfully',
+        data:token
+     })
 })
+
 router.delete('/logout',(req,res)=>{
     req.session.destroy(err =>{
    if(err) return res.json('error occures');
@@ -259,6 +270,112 @@ router.delete('/logout',(req,res)=>{
   res.json('session destroyed successfully');
     })
 })
+
+router.get('/register',(req,res)=>{
+    res.render('index.ejs')
+})
+
+
+const secretKey = 'mysecret';
+router.post('/register',upload.any(),async(req,res)=>{
+    const {name,email,password} = req.body;
+    
+    if(!name && !email && !password){
+        console.log('enter full credentials')
+        return res.render('index.ejs')
+    }
+   
+    // const hash= await bcrypt.hash(password,10);
+    const hash = await argon2.hash(password)
+    const user = new User({name,email, password:hash})
+    await user.save();
+    console.log('user created successfully',user)
+     return res.render('register.ejs',{name})
+})
+
+router.get('/login',(req,res)=>{
+    return res.render('login.ejs')
+})
+
+
+
+
+router.post('/login',upload.any(),async(req,res)=>{
+    // const {email,password} = req.body;
+    try{
+    const {email,password} = req.body;
+    if(!email && !password){
+        console.log('this email and password doesnot exist u need to signup')
+        return res.render('login.ejs')
+    }
+ 
+const user = await User.findOne({ email })
+    if(!user) return res.render('index.ejs');
+        const isPasswordCorrect= await argon2.verify(user.password , password)
+        if(!isPasswordCorrect){
+            console.log('password is wrong')
+             return res.render('index.ejs')
+        }
+
+        
+        req.session.user=user
+        res.cookie('username',user.name,{maxAge:60000})
+        const token = jwt.sign({id:user._id, email:user.email},secretKey,{expiresIn:'4h'})
+        // console.log(token)
+    res.cookie('token',token,{
+        httpOnly:true,
+        maxAge:4 * 60 * 60 * 1000
+    })
+    console.log(req.session)
+    return res.render('welcome.ejs')
+}catch(error){
+    console.log('error occured',{message:error.message})
+    return res.json({message:error.message})
+}
+    
+
+
+
+})
+const authenticate=(req,res,next)=>{
+    // console.log(req.session.user,req.cookie.token)
+   try{
+    if(req.session.user && req.cookies.token){
+        next();
+    }else{
+        return res.render('login.ejs')
+    }
+    //  return   res.render('secrect.ejs');
+    //  res.json({
+    //     message:"session set successfully",
+    //     sessionData:req.session
+    // })
+  }catch(error){
+    console.log('error occured')
+
+    return res.json('something went wrong')
+  }
+}
+
+
+  router.get('/mainpage',authenticate,(req,res)=>{
+//   if(req.session.user && req.cookies.token);
+//     console.log('user authenticated successfully')
+//     res.json({
+//         message:"session set successfully",
+//         sessionData:req.session.user
+//     })
+console.log(req.session.user,req.cookies.token)
+    return res.render('secrect.ejs');
+// console.log('helo')
+  })
+
+
+
+
+
+
+
 export {
     router,
 }
