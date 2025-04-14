@@ -78,7 +78,7 @@ try{
  
 })
 
-router.get('/allusers',async(req,res)=>{
+router.get('/',async(req,res)=>{
     const user = await User.find({})
     console.log(user)
     return res.json(user)
