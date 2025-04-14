@@ -1,3 +1,17 @@
+
+
+// If u want see only the output pages then use browser after this install the postman tool u find each and every process 
+// that how the process is going on and how is request and reponse cycle happens its clear while using the postman
+
+
+
+
+
+
+
+
+
+
 // => this is the simple login based basic project based on the user login credentials mostly i used backend so just ignore frontend
 
 // => as of iam familear with backend so i just wanted know that how the new user logsin and logout , how the password is stored into hash form
@@ -77,3 +91,10 @@
 
 //=> seeing the when u login inti my this http://localhost:3000/user/mainpage  it is only accessed when the person is fully authenticated
 // otherwise it will be deneid access so follow the above steps correctly
+
+
+//=> if u want to upload the files this is also there i used multer to accept the file which is most commonly used mehtod 
+
+// => this multer is for to accept the file from client and send it to its destination as off it takes only two arguments one filename and another destination where to store the upload the file
+
+//=> if u want want know first basucs of all these go the file hello.js see from starting u find the code some simple to advanced code but my preference is to use the postman
